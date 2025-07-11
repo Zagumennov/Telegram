@@ -47,6 +47,7 @@ import org.telegram.ui.AccountFrozenAlert;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.CallLogActivity;
 import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Components.AlertsCreator;
@@ -72,6 +73,61 @@ public class VoIPHelper {
 	public static long lastCallTime = 0;
 
 	private static final int VOIP_SUPPORT_ID = 4244000;
+
+	public static void startCallFromProfile(
+			TLRPC.User user,
+			boolean videoCall,
+			boolean canVideoCall,
+			final Activity activity,
+			TLRPC.UserFull userFull,
+			AccountInstance accountInstance,
+			Theme.ResourcesProvider resourceProvider
+	) {
+		if (accountInstance == null ? MessagesController.getInstance(UserConfig.selectedAccount).isFrozen() : accountInstance.getMessagesController().isFrozen()) {
+			AccountFrozenAlert.show(accountInstance == null ? UserConfig.selectedAccount : accountInstance.getCurrentAccount());
+			return;
+		}
+		if (userFull != null && userFull.phone_calls_private) {
+			CallLogActivity.inviteByLink(activity, user, UserConfig.selectedAccount, resourceProvider);
+			return;
+		}
+		if (ConnectionsManager.getInstance(UserConfig.selectedAccount).getConnectionState() != ConnectionsManager.ConnectionStateConnected) {
+			boolean isAirplaneMode = Settings.System.getInt(activity.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+			AlertDialog.Builder bldr = new AlertDialog.Builder(activity)
+					.setTitle(isAirplaneMode ? LocaleController.getString(R.string.VoipOfflineAirplaneTitle) : LocaleController.getString(R.string.VoipOfflineTitle))
+					.setMessage(isAirplaneMode ? LocaleController.getString(R.string.VoipOfflineAirplane) : LocaleController.getString(R.string.VoipOffline))
+					.setPositiveButton(LocaleController.getString(R.string.OK), null);
+			if (isAirplaneMode) {
+				final Intent settingsIntent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+				if (settingsIntent.resolveActivity(activity.getPackageManager()) != null) {
+					bldr.setNeutralButton(LocaleController.getString(R.string.VoipOfflineOpenSettings), (dialog, which) -> activity.startActivity(settingsIntent));
+				}
+			}
+			try {
+				bldr.show();
+			} catch (Exception e) {
+				FileLog.e(e);
+			}
+			return;
+		}
+
+		if (Build.VERSION.SDK_INT >= 23) {
+			ArrayList<String> permissions = new ArrayList<>();
+			if (activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+				permissions.add(Manifest.permission.RECORD_AUDIO);
+			}
+			if (videoCall && activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+				permissions.add(Manifest.permission.CAMERA);
+			}
+			if (permissions.isEmpty()) {
+				initiateCall(user, null, null, videoCall, canVideoCall, false, null, activity, null, accountInstance);
+			} else {
+				activity.requestPermissions(permissions.toArray(new String[0]), videoCall ? 102 : 101);
+			}
+		} else {
+			initiateCall(user, null, null, videoCall, canVideoCall, false, null, activity, null, accountInstance);
+		}
+	}
 
 	public static void startCall(TLRPC.User user, boolean videoCall, boolean canVideoCall, final Activity activity, TLRPC.UserFull userFull, AccountInstance accountInstance) {
 		if (accountInstance == null ? MessagesController.getInstance(UserConfig.selectedAccount).isFrozen() : accountInstance.getMessagesController().isFrozen()) {
