@@ -49,6 +49,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 
+import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
@@ -74,7 +75,6 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SavedMessagesController;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
@@ -474,6 +474,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     private float nameLayoutTranslateX;
     private boolean nameLayoutEllipsizeLeft;
     private boolean nameLayoutEllipsizeByGradient;
+    @Nullable
+    public String titleLabel = null;
+    private StaticLayout titleLabelLayout;
+    private float titleLabelLayoutWidth, titleLabelLayoutHeight, titleLabelX, titleLabelY;
+    private TextPaint titleLabelTextPaint;
+    private Paint titleLabelBgPaint;
     private Paint fadePaint;
     private Paint fadePaintBack;
     private boolean drawNameLock;
@@ -2135,6 +2141,31 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         if (drawBotVerified) {
             nameWidth -= dp(21);
         }
+
+        if (!TextUtils.isEmpty(titleLabel)) {
+            try {
+                if (titleLabelTextPaint == null) {
+                    titleLabelTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                }
+                titleLabelTextPaint.setTypeface(AndroidUtilities.bold());
+                titleLabelTextPaint.setTextSize(dp(11));
+                int width = (int) Math.ceil(titleLabelTextPaint.measureText(titleLabel.toString()));
+                titleLabelLayout = new StaticLayout(titleLabel, titleLabelTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                titleLabelLayoutWidth = titleLabelLayout.getLineWidth(0);
+                titleLabelLayoutHeight = titleLabelLayout.getLineBottom(0);
+                nameWidth -= (int)titleLabelLayoutWidth + dp(6) + dp(6) + dp(6);
+            } catch (Exception e) {
+                FileLog.e(e);
+                titleLabelLayout = null;
+                titleLabelLayoutWidth = 0;
+                titleLabelLayoutHeight = 0;
+            }
+        } else {
+            titleLabelLayout = null;
+            titleLabelLayoutWidth = 0;
+            titleLabelLayoutHeight = 0;
+        }
+
         try {
             int ellipsizeWidth = nameWidth - dp(12);
             if (ellipsizeWidth < 0) {
@@ -3756,6 +3787,33 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         canvas.drawRect(0, 0, dp(24), getMeasuredHeight(), fadePaintBack);
                     }
                     canvas.restore();
+                    canvas.restore();
+                }
+                if (titleLabelLayout != null) {
+                    final int headerColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader, resourcesProvider);
+                    if (titleLabelTextPaint == null) {
+                        titleLabelTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                    }
+                    if (titleLabelBgPaint == null) {
+                        titleLabelBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    }
+
+                    titleLabelX = nameLeft + nameLayoutTranslateX + nameLayout.getLineWidth(0) + dp(6) + dp(6);
+                    titleLabelY = nameTop + (nameLayout.getLineBottom(0) - titleLabelLayoutHeight) / 2;
+                    rect.set(
+                            titleLabelX - dp(6),
+                            titleLabelY - dp(2),
+                            titleLabelX + titleLabelLayoutWidth + dp(6),
+                            titleLabelY + titleLabelLayoutHeight + dp(2)
+                    );
+                    titleLabelTextPaint.setColor(headerColor);
+                    titleLabelBgPaint.setColor(Theme.multAlpha(headerColor, .1f));
+
+                    canvas.drawRoundRect(rect, rect.height(), rect.height(), titleLabelBgPaint);
+
+                    canvas.save();
+                    canvas.translate(titleLabelX, titleLabelY);
+                    titleLabelLayout.draw(canvas);
                     canvas.restore();
                 }
             }
