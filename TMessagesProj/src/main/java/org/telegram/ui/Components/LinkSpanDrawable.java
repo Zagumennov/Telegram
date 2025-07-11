@@ -133,8 +133,10 @@ public class LinkSpanDrawable<S extends CharacterStyle> {
         return mSpan;
     }
 
+    public int roundedRadius = dp(CORNER_RADIUS_DP);
+
     public boolean draw(Canvas canvas) {
-        final int radius = isLite ? 0 : dp(CORNER_RADIUS_DP);
+        final int radius = isLite ? 0 : roundedRadius;
         boolean cornerRadiusUpdate = cornerRadius != radius;
         if (mSelectionPaint == null) {
             mSelectionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -873,12 +875,23 @@ public class LinkSpanDrawable<S extends CharacterStyle> {
         private final LinkCollector links = new LinkCollector(this);
         private final Paint linkBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+        public boolean isRounded = false;
+        public void setRounded(boolean rounded) {
+            if (this.isRounded != rounded) {
+                this.isRounded = rounded;
+            }
+        }
+
         @Override
         protected void onDraw(Canvas canvas) {
             if (isClickable()) {
                 AndroidUtilities.rectTmp.set(0, 0, getPaddingLeft() + getTextWidth() + getPaddingRight(), getHeight());
                 linkBackgroundPaint.setColor(getLinkColor());
-                canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(CORNER_RADIUS_DP), dp(CORNER_RADIUS_DP), linkBackgroundPaint);
+                if (isRounded) {
+                    canvas.drawRoundRect(AndroidUtilities.rectTmp, getHeight()/2f, getHeight()/2f, linkBackgroundPaint);
+                } else {
+                    canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(CORNER_RADIUS_DP), dp(CORNER_RADIUS_DP), linkBackgroundPaint);
+                }
             }
 
             super.onDraw(canvas);
@@ -898,6 +911,9 @@ public class LinkSpanDrawable<S extends CharacterStyle> {
             if (links != null) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     final LinkSpanDrawable link = new LinkSpanDrawable<ClickableSpan>(null, resourcesProvider, event.getX(), event.getY());
+                    if (isRounded) {
+                        link.roundedRadius = getHeight() / 2;
+                    }
                     link.setColor(getLinkColor());
                     pressedLink = link;
                     links.addLink(pressedLink);
