@@ -2,12 +2,12 @@ package org.telegram.ui.Stars;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.dpf2;
+import static java.lang.Math.abs;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.ui.ActionBar.Theme;
 
 public class StarGiftPatterns {
 
@@ -124,19 +124,19 @@ public class StarGiftPatterns {
     }
 
     private static final float[] profileRight = new float[] {
-        -35.66f, -5, 24, .2388f,
-        -14.33f, -29.33f, 20.66f, .32f,
-        -15, -73.66f, 19.33f, .32f,
-        -2, -99.66f, 18, .1476f,
-        -64.33f, -24.66f, 23.33f, .3235f,
-        -40.66f, -53.33f, 24, .3654f,
-        -50.33f, -85.66f, 20, .172f,
-        -96, -1.33f, 19.33f, .3343f,
-        -136.66f, -13, 18.66f, .2569f,
-        -104.66f, -33.66f, 20.66f, .2216f,
-        -82, -62.33f, 22.66f, .2562f,
-        -131.66f, -60, 18, .1316f,
-        -105.66f, -88.33f, 18, .1487f
+        -35.66f,    -5,         24, .2388f,
+        -14.33f,    -29.33f,    20.66f, .32f,
+        -15,        -73.66f,    19.33f, .32f,
+        -2,         -99.66f,    18, .1476f,
+        -64.33f,    -24.66f,    23.33f, .3235f,
+        -40.66f,    -53.33f,    24, .3654f,
+        -50.33f,    -85.66f,    20, .172f,
+        -96,        -1.33f,     19.33f, .3343f,
+        -136.66f,   -13,        18.66f, .2569f,
+        -104.66f,   -33.66f,    20.66f, .2216f,
+        -82,        -62.33f,    22.66f, .2562f,
+        -131.66f,   -60,        18, .1316f,
+        -105.66f,   -88.33f,    18, .1487f
     };
     private static final float[] profileLeft = new float[] {
         0, -107.33f, 16, .1505f,
@@ -209,4 +209,122 @@ public class StarGiftPatterns {
         }
     }
 
+    // (x, y, size, alpha)
+    private static final float[] patternLocationsRedesign = new float[] {
+            -8.665f, 105f, 17.33f, .11f, // 1
+
+            -67f, 74f, 18.66f, .24f, // 2
+            48.33f, 74f, 18.66f, .24f, // 3
+
+            -65f, 6.33f, 18f, .24f, // 4
+            47f, 6.33f, 18f, .24f, // 5
+
+            -107.32f, 96.66f, 17.66f, .11f, // 6
+            89.66f, 96.66f, 17.66f, .11f, // 7
+
+            -102.33f, -12.34f, 16f, .18f, // 8
+            86.33f, -12.34f, 16f, .18f, // 9
+
+            -9.33f, -25.32f, 18.66f, .24f, // 10
+
+            -52f, 118f, 19.33f, .11f, // 11
+            32.66f, 118f, 19.33f, .11f, // 12
+
+            -92f, 41f, 17.33f, .24f, // 13
+            74.66f, 41f, 17.33f, .24f, // 14
+
+            -51.33f, -36f, 16f, .11f, // 15
+            35.33f, -36f, 16f, .11f, // 16
+
+            -139.33f, 42.66f, 16f, .11f, // 17
+            123.33f, 42.66f, 16f, .11f // 18
+    };
+
+    public static void drawPatternIcons(
+            Canvas canvas,
+            Drawable pattern,
+            float avatarStaticCenterX,
+            float avatarStaticY,
+            float avatarCurrentCenterX,
+            float avatarCurrentCenterY,
+            float progress
+    ) {
+        for (int i = 0; i < patternLocationsRedesign.length; i += 4) {
+            final int j = i / 4;
+            final float x = patternLocationsRedesign[i];
+            final float y = patternLocationsRedesign[i + 1];
+            final float size = patternLocationsRedesign[i + 2];
+            final float alpha = patternLocationsRedesign[i + 3];
+
+            float centerX = avatarStaticCenterX + dpf2(x) + dpf2(size) / 2f;
+            float currentX = interpolateX(j, centerX, avatarCurrentCenterX, progress);
+            float currentY = interpolateY(j, centerX, avatarStaticY + dpf2(y) + dpf2(size) / 2f, avatarCurrentCenterX, avatarCurrentCenterY, progress);
+
+            pattern.setBounds(
+                    (int) (currentX - dpf2(size) / 2f - dpf2(2)),
+                    (int) (currentY - dpf2(size) / 2f - dpf2(2)),
+                    (int) (currentX + dpf2(size) / 2f + dpf2(2)),
+                    (int) (currentY + dpf2(size) / 2f + dpf2(2))
+            );
+            pattern.setAlpha((int) (0xFF * alpha));
+            pattern.draw(canvas);
+        }
+    }
+
+    // (x1, x2)
+    static float[] progresses = new float[] {
+            0f, 0.3f, // 1
+            0f, 0.3f, // 2
+            0f, 0.3f, // 3
+            0f, 0.3f, // 4
+            0f, 0.3f, // 5
+            0f, 0.3f, // 6
+            0f, 0.3f, // 7
+            0f, 0.3f, // 8
+            0f, 0.3f, // 9
+
+            0f, 0.3f, // 10
+            0.15f, 0.7f, // 11
+            0.15f, 0.7f, // 12
+            0.15f, 0.45f, // 13
+            0.15f, 0.45f, // 14
+            0.15f, 0.45f, // 15
+            0.15f, 0.45f, // 16
+            0.15f, 0.65f, // 17
+            0.15f, 0.65f, // 18
+    };
+
+    private static float interpolateX(int j, float centerX, float avatarCurrentCenterX, float progress) {
+        if (progress < progresses[j * 2]) {
+            return centerX;
+        } else if (progress > progresses[j * 2 + 1]) {
+            return avatarCurrentCenterX;
+        } else {
+            float t = normalize(progress, progresses[j * 2], progresses[j * 2 + 1]);
+            float dx = avatarCurrentCenterX - centerX;
+            return centerX + t * dx;
+        }
+    }
+
+    private static float interpolateY(int j, float centerX, float centerY, float avatarCurrentCenterX, float avatarCurrentCenterY, float progress) {
+        if (progress < progresses[j * 2]) {
+            return centerY;
+        } else if (progress > progresses[j * 2 + 1]) {
+            return avatarCurrentCenterY;
+        } else {
+            float t = normalize(progress, progresses[j * 2], progresses[j * 2 + 1]);
+            float dx = avatarCurrentCenterX - centerX;
+            if (abs(dx) <= 0.0001f) {
+                return centerY + t * (avatarCurrentCenterY - centerY);
+            } else {
+                float k = (avatarCurrentCenterY - centerY) / (dx * dx);
+                float x = centerX + t * dx;
+                return centerY + k * (x - centerX) * (x - centerX);
+            }
+        }
+    }
+
+    public static float normalize(float x, float a, float b) {
+        return (x - a) / (b - a);
+    }
 }
