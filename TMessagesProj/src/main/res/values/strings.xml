@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Telegram</string>
-    <string name="AppNameBeta">Telegram Beta</string>
+    <string name="AppName">Profile Messenger</string>
+    <string name="AppNameBeta">Profile Messenger Beta</string>
     <string name="LanguageName">English</string>
     <string name="English">English</string>
     <string name="LanguageNameInEnglish">English</string>
@@ -243,6 +243,7 @@
     <string name="ClearHistoryCache">Delete from cache</string>
     <string name="DeleteChat">Delete and exit</string>
     <string name="HideOnTop">Hide</string>
+    <string name="PersonalChannel">personal channel</string>
     <string name="UnhideFromTop">Pin</string>
     <string name="DialogPin">Pin</string>
     <string name="DialogUnpin">Unpin</string>
@@ -490,6 +491,8 @@
     <string name="ChannelInviteLinkTitle">Invite Link</string>
     <string name="GroupAddMembers">Add Members</string>
     <string name="ChannelAddSubscribers">Add Subscribers</string>
+    <string name="Leave">Leave</string>
+    <string name="Join">Join</string>
     <string name="LeaveChannel">Leave Channel</string>
     <string name="LeaveChannelMenu">Leave channel</string>
     <string name="ChannelSettings">Settings</string>
@@ -785,6 +788,7 @@
     <string name="CantAddBotAsAdmin">Sorry, bots can only be added to channels as administrators.</string>
     <string name="AdminWillBeRemoved">%1$s will be removed from admins if you restrict them.</string>
     <string name="Discussion">Discussion</string>
+    <string name="Discuss">Discuss</string>
     <string name="ViewDiscussion">View discussion</string>
     <string name="DiscussionInfo">Add a group chat for comments</string>
     <string name="LinkedChannel">Linked Channel</string>
@@ -1191,6 +1195,8 @@
     <string name="FromFormatted">From %1$s</string>
     <string name="SearchFrom">from:</string>
     <string name="NoRecent">No recent</string>
+    <string name="Share">Share</string>
+    <string name="Gift">Gift</string>
     <string name="Message">Message</string>
     <string name="TypeMessage">Message</string>
     <string name="TypeMessageIn">Message in %1$s</string>
@@ -1886,6 +1892,7 @@
     <string name="AddToExistingContact">Add to Existing Contact</string>
     <string name="UserBio">Bio</string>
     <string name="UserBioDetail">Add a few words about yourself</string>
+    <string name="Description">Description</string>
     <string name="UserBioInfo">You can add a few lines about yourself. Anyone who opens your profile will see this text.</string>
     <string name="StartEncryptedChat">Start Secret Chat</string>
     <string name="NoGroupsInCommon">No common groups</string>
@@ -2249,6 +2256,10 @@
     <string name="NotificationsOffUntil">Off until %1$s</string>
     <string name="NotificationsTurnOn">Turn On</string>
     <string name="NotificationsTurnOff">Turn Off</string>
+    <string name="ButtonMute">Mute</string>
+    <string name="ButtonUnmute">Unmute</string>
+    <string name="ButtonReport">Report</string>
+    <string name="ButtonMessage">Message</string>
     <string name="BlockedUsers">Blocked Users</string>
     <string name="BlockedUsersInfo">Blocked users will not be able to contact you and will not see your Last Seen time.</string>
     <string name="BlockUserMultiTitle">Block User</string>
@@ -3564,6 +3575,8 @@
     <string name="BotUnblock">RESTART</string>
     <string name="BotRestart">Restart bot</string>
     <string name="BotAddToMenu">Add to Menu</string>
+    <string name="ButtonRestart">Restart</string>
+    <string name="ButtonStop">Stop</string>
     <string name="BotCantOpenAttachMenuBot">This bot can\'t be opened in chats with bots.</string>
     <string name="BotCantOpenAttachMenuUser">This bot can\'t be opened in chats with users.</string>
     <string name="BotCantOpenAttachMenuGroup">This bot can\'t be opened in groups.</string>
@@ -3604,6 +3617,7 @@
     <string name="SuggestedPostPublish">Publish</string>
     <string name="SuggestedPostAcceptTitle">Accept Terms</string>
     <string name="Call">Call</string>
+    <string name="Stream">Stream</string>
     <string name="VideoCall">Video Call</string>
     <string name="Copy">Copy</string>
     <string name="Restrict">Restrict</string>
@@ -4106,6 +4120,9 @@
     <string name="VoipAudioRoutingBluetooth">Bluetooth</string>
     <string name="VoipOutputDevices">Output Devices</string>
     <string name="ReturnToCall">RETURN TO CALL</string>
+    <string name="CallUnavailableTitle">Invite via Link</string>
+    <string name="CallUnavailableSubtitle">**%1$s** restricts calling them. You can send them an invite link instead.</string>
+    <string name="CallUnavailableButton">Send Invite Link</string>
     <string name="CallNotAvailable">Sorry, **%1$s** doesn\'t accept calls.</string>
     <string name="CallEmojiKeyTooltip">If emoji on %1$s\'s screen are the same, this call is 100%% secure.</string>
     <string name="CallMessageReportProblem">Rate Call</string>
@@ -4226,6 +4243,7 @@
     <string name="VoipChannelEndAlertText">Do you want to end this live stream?</string>
     <string name="VoipChannelLeaveAlertEndChat">End live stream</string>
     <string name="VoipChannelViewVoiceChat">VIEW LIVE STREAM</string>
+    <string name="LiveStream">Live Stream</string>
     <string name="VoipChannelVoiceChat">Live Stream</string>
     <string name="VoipChannelLabelLive">LIVE</string>
     <string name="VoipChannelWatching">watching</string>
